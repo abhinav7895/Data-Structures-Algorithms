@@ -6,7 +6,12 @@ public class Main {
         ll.insertAtLast(123);
         ll.insertAtLast(1243);
         ll.insertAtHead(0);
-        ll.insertAtIndex(5, 1000);
+        ll.transverseOnLinkedList();
+        ll.deleteAtIndex(2);
+        ll.deleteAtIndex(2);
+        ll.deleteAtIndex(1);
+        ll.deleteAtIndex(1);
+        ll.deleteAtIndex(0);
         ll.transverseOnLinkedList();
     }
 }

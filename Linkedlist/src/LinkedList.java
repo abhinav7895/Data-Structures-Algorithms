@@ -65,6 +65,51 @@ public class LinkedList {
         node.next = newNode;
         size++;
     }
+    public int deleteFirst() {
+        // return -1, if no element is present
+        if(head == null) return -1;
+
+        // copy the element data
+        int element = head.value;
+        // move the head to next node
+        head = head.next;
+        size--;
+        return  element;
+    }
+
+    public int deleteLast() {
+        // return -1, if no element is present
+        if (head == null) return  -1;
+        if (size == 1) return deleteFirst();
+
+        int element = tail.value;
+        // get the previous node of the tail node:
+        Node prevNode = getNode(size - 2);
+        // point it to the null
+        prevNode.next = null;
+
+        // copy the element data
+        tail = prevNode;
+        size--;
+        return  element;
+    }
+
+    public int deleteAtIndex(int index) {
+        if (index < 0 || index >= size) return -1;
+
+        if (index == 0) {
+            return deleteFirst();
+        } else if (index == size - 1) {
+            return deleteLast();
+        } else {
+            Node prevNode = getNode(index - 1);
+            int element = prevNode.next.value;
+            prevNode.next = prevNode.next.next;
+            size--;
+            return element;
+        }
+
+    }
 
     public Node getNode(int index) {
         if (head == null && index < size) return null;
