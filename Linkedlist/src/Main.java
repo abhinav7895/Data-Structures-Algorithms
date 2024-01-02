@@ -1,6 +1,7 @@
 public class Main {
     public static void main(String[] args) {
-        LinkedList ll = new LinkedList();
+        /*
+        SinglyLinkedList ll = new SinglyLinkedList();
         ll.insertAtHead(12);
         ll.insertAtHead(34);
         ll.insertAtLast(123);
@@ -13,5 +14,21 @@ public class Main {
         ll.deleteAtIndex(1);
         ll.deleteAtIndex(0);
         ll.transverseOnLinkedList();
+         */
+
+        DoublyLinkedList dll = new DoublyLinkedList();
+        dll.insertAtFirst(12);
+        dll.insertAtFirst(13);
+        dll.insertAtFirst(14);
+        dll.insertAtFirst(15);
+        dll.traverse();
+        dll.insertAtLast(3);
+        dll.insertAtLast(322);
+        dll.traverse();
+
+        dll.insertAtIndex(200, 2);
+        dll.insertAtIndex(190, 5);
+        dll.traverse();
+        dll.traverseInReverseOrder();
     }
 }

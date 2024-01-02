@@ -1,9 +1,9 @@
-public class LinkedList {
+public class SinglyLinkedList {
     private  Node head;
     private  Node tail;
     private int size;
 
-    public LinkedList() {
+    public SinglyLinkedList() {
         this.size = 0;
     }
 
