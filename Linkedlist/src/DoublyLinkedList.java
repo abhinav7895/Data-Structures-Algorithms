@@ -46,12 +46,34 @@ public class DoublyLinkedList {
         }
 
         Node prevNode = getNode(index - 1);
-        Node newNode = new Node(value);
-        newNode.next = prevNode.next;
+        Node newNode = new Node(value, prevNode, prevNode.next);
+
         prevNode.next.prev = newNode;
-        newNode.prev = prevNode;
         prevNode.next = newNode;
         size++;
+    }
+
+    public int deleteFirst() {
+        if (head == null) {
+            throw new EmptyListException("List is Empty");
+        }
+        int deleteElement = head.value;
+        head = head.next;
+        head.prev = null;
+        size--;
+        return deleteElement;
+    }
+
+    public int deleteLast() {
+        if (head == null) {
+            throw new EmptyListException("List is Empty");
+        }
+        Node prevNode = getNode(size - 2);
+        int deleteElement = prevNode.next.value;
+        prevNode.next = null;
+        tail = prevNode;
+        size--;
+        return deleteElement;
     }
 
     public void traverseInReverseOrder() {

@@ -29,6 +29,13 @@ public class Main {
         dll.insertAtIndex(200, 2);
         dll.insertAtIndex(190, 5);
         dll.traverse();
+        dll.deleteFirst();
+        dll.deleteFirst();
+        dll.deleteFirst();
+        dll.traverse();
+        dll.deleteLast();
+        dll.deleteLast();
+        dll.traverse();
         dll.traverseInReverseOrder();
     }
 }
