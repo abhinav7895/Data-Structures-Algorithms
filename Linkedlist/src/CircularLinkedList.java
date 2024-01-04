@@ -1,15 +1,18 @@
 /**
- * DoublyLinkedList class represents a doubly linked list with various operations.
+ * CircularLinkedList class represents a circular linked list with various operations.
  */
-public class DoublyLinkedList {
-    private Node head; // Head of the doubly linked list.
-    private Node tail; // Tail of the doubly linked list.
-    private int size;  // Size of the doubly linked list.
+public class CircularLinkedList {
+    // Head and tail pointers for the circular linked list.
+    private Node head;
+    private Node tail;
+
+    // Size of the linked list.
+    private int size;
 
     /**
-     * Constructor to initialize an empty doubly linked list.
+     * Constructor to initialize an empty circular linked list.
      */
-    public DoublyLinkedList() {
+    public CircularLinkedList() {
         this.size = 0;
     }
 
@@ -19,15 +22,15 @@ public class DoublyLinkedList {
      * @param value The value to be inserted.
      */
     public void insertAtFirst(int value) {
+        Node newNode = new Node(value);
         if (head == null) {
-            // If the list is empty, create a new node and set it as both head and tail.
-            Node newNode = new Node(value);
+            // If the list is empty, set both head and tail to the new node.
             head = newNode;
-            tail = newNode;
+            tail = head;
         } else {
-            // Otherwise, insert a new node at the beginning and update the head.
-            Node newNode = new Node(value);
-            head.prev = newNode;
+            // Otherwise, insert the new node at the beginning and update the tail.
+            Node lastNode = getNode(size - 1);
+            lastNode.next = newNode;
             newNode.next = head;
             head = newNode;
         }
@@ -40,17 +43,18 @@ public class DoublyLinkedList {
      * @param value The value to be inserted.
      */
     public void insertAtLast(int value) {
+        Node newNode = new Node(value);
         if (head == null) {
             // If the list is empty, insert the node at the first position.
             insertAtFirst(value);
             return;
+        } else {
+            // Otherwise, insert the new node at the end and update the tail.
+            Node lastNode = getNode(size - 1);
+            lastNode.next = newNode;
+            newNode.next = head;
+            tail = newNode;
         }
-        // Otherwise, insert a new node at the end and update the tail.
-        Node lastNode = getNode(size - 1);
-        Node newNode = new Node(value);
-        lastNode.next = newNode;
-        newNode.prev = lastNode;
-        tail = newNode;
         size++;
     }
 
@@ -61,13 +65,13 @@ public class DoublyLinkedList {
      * @param index The index at which the node should be inserted.
      */
     public void insertAtIndex(int value, int index) {
-        if (index >= size || index < 0) {
+        if (index < 0 || index >= size) {
             throw new InvalidIndexException("Invalid Index");
         } else if (index == 0) {
             // If index is 0, insert at the beginning.
             insertAtFirst(value);
             return;
-        } else if(index == size - 1) {
+        } else if (index == size - 1) {
             // If index is at the end, insert at the last position.
             insertAtLast(value);
             return;
@@ -75,8 +79,7 @@ public class DoublyLinkedList {
 
         // Insert the new node at the specified index and update the size.
         Node prevNode = getNode(index - 1);
-        Node newNode = new Node(value, prevNode, prevNode.next);
-        prevNode.next.prev = newNode;
+        Node newNode = new Node(value, prevNode.next);
         prevNode.next = newNode;
         size++;
     }
@@ -89,17 +92,20 @@ public class DoublyLinkedList {
     public int deleteFirst() {
         if (head == null) {
             throw new EmptyListException("List is Empty");
-        }
-        int deleteElement = head.value;
-        if (head.next == null) {
+        } else if (head.next == head) {
             // If there is only one node, delete it and update head and tail.
+            int deleteElement = head.value;
             head = null;
             tail = null;
-        } else {
-            // Delete the first node and update head and its previous pointer.
-            head = head.next;
-            head.prev = null;
+            size--;
+            return deleteElement;
         }
+
+        // Delete the first node and update head, tail, and size.
+        Node lastNode = getNode(size - 1);
+        int deleteElement = head.value;
+        lastNode.next = head.next;
+        head = head.next;
         size--;
         return deleteElement;
     }
@@ -112,20 +118,16 @@ public class DoublyLinkedList {
     public int deleteLast() {
         if (head == null) {
             throw new EmptyListException("List is Empty");
-        } else if (head.next == null) {
+        } else if (head.next == head) {
             // If there is only one node, delete it using deleteFirst.
             return deleteFirst();
         }
-        // Delete the last node and update tail and size.
-        Node prevNode = getNode(size - 2);
-        int deleteElement = prevNode.next.value;
-        prevNode.next = null;
-        tail = prevNode;
 
-        // Update head if size is reduced to 1.
-        if(size == 1) {
-            head = tail;
-        }
+        // Delete the last node and update tail and size.
+        Node prevOfLastNode = getNode(size - 2);
+        int deleteElement = prevOfLastNode.next.value;
+        prevOfLastNode.next = head;
+        tail = prevOfLastNode;
         size--;
         return deleteElement;
     }
@@ -137,14 +139,17 @@ public class DoublyLinkedList {
      * @return The value of the deleted node.
      */
     public int deleteAtIndex(int index) {
-        if(index >= size || index < 0) {
-            throw new InvalidIndexException("Invalid Index");
-        } else if(head == null) {
+        if (head == null) {
             throw new EmptyListException("List is Empty");
+        } else if (head.next == head) {
+            // If there is only one node, delete it using deleteFirst.
+            return deleteFirst();
+        } else if (index < 0 || index >= size) {
+            throw new InvalidIndexException("Invalid Index");
         } else if (index == 0) {
             // If index is 0, delete the first node.
             return deleteFirst();
-        } else if(index == size - 1) {
+        } else if (index == size - 1) {
             // If index is at the end, delete the last node.
             return deleteLast();
         }
@@ -153,26 +158,8 @@ public class DoublyLinkedList {
         Node prevNode = getNode(index - 1);
         int deleteElement = prevNode.next.value;
         prevNode.next = prevNode.next.next;
-        prevNode.next.prev = prevNode;
         size--;
         return deleteElement;
-    }
-
-    /**
-     * Traverses and prints the elements of the linked list in reverse order.
-     */
-    public void traverseInReverseOrder() {
-        if (head == null) {
-            throw new EmptyListException("List is empty");
-        }
-
-        // Traverse the linked list in reverse order and print each element.
-        Node lastNode = getNode(size - 1);
-        while (lastNode != null) {
-            System.out.print(lastNode.value + " <- ");
-            lastNode = lastNode.prev;
-        }
-        System.out.println("Start");
     }
 
     /**
@@ -180,15 +167,15 @@ public class DoublyLinkedList {
      */
     public void traverse() {
         if (head == null) {
-            throw new EmptyListException("List is empty");
+            throw new EmptyListException("List is Empty");
         }
 
-        // Traverse the linked list and print each element.
+        // Traverse the circular linked list and print each element.
         Node temp = head;
-        while (temp != null) {
+        do {
             System.out.print(temp.value + " -> ");
             temp = temp.next;
-        }
+        } while (temp != head);
         System.out.println("END");
     }
 
@@ -198,58 +185,15 @@ public class DoublyLinkedList {
      * @param index The index of the node to be retrieved.
      * @return The node at the specified index.
      */
-    private Node getNode(int index) {
+    public Node getNode(int index) {
         if (head == null || index < 0 || index >= size) {
-            throw new InvalidIndexException("Invalid index");
+            throw new InvalidIndexException("Index is invalid");
         }
-
-        Node temp;
-        int middle = size / 2;
-
-        if (index <= middle) {
-            temp = head;
-            for (int i = 0; i < index; i++) {
-                temp = temp.next;
-            }
-        } else {
-            temp = tail;
-            for (int i = size - 1; i > index; i--) {
-                temp = temp.prev;
-            }
+        Node temp = head;
+        for (int i = 0; i < index; i++) {
+            temp = temp.next;
         }
-
         return temp;
-    }
-
-    /**
-     * Node class represents a node in the doubly linked list.
-     */
-    private static class Node {
-        private Node prev;  // Pointer to the previous node in the list.
-        private Node next;  // Pointer to the next node in the list.
-        private int value;   // Value stored in the node.
-
-        /**
-         * Constructor to initialize a node with a given value.
-         *
-         * @param value The value to be stored in the node.
-         */
-        public Node(int value) {
-            this.value = value;
-        }
-
-        /**
-         * Constructor to initialize a node with a given value, previous, and next nodes.
-         *
-         * @param value The value to be stored in the node.
-         * @param prev The previous node in the list.
-         * @param next The next node in the list.
-         */
-        public Node(int value, Node prev, Node next) {
-            this.value = value;
-            this.next = next;
-            this.prev = prev;
-        }
     }
 
     /**
@@ -267,6 +211,37 @@ public class DoublyLinkedList {
     private static class EmptyListException extends RuntimeException {
         public EmptyListException(String message) {
             super(message);
+        }
+    }
+
+    /**
+     * Node class represents a node in the circular linked list.
+     */
+    private static class Node {
+        // Pointer to the next node in the list.
+        Node next;
+
+        // Value stored in the node.
+        int value;
+
+        /**
+         * Constructor to initialize a node with a given value.
+         *
+         * @param value The value to be stored in the node.
+         */
+        public Node(int value) {
+            this.value = value;
+        }
+
+        /**
+         * Constructor to initialize a node with a given value and next node.
+         *
+         * @param value The value to be stored in the node.
+         * @param next The next node in the list.
+         */
+        public Node(int value, Node next) {
+            this.value = value;
+            this.next = next;
         }
     }
 }
